@@ -88,10 +88,10 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Upload", Toast.LENGTH_LONG).show();
     }
 
-    private class CloadImage extends AsyncTask<String, Integer, List<Bitmap>> {
+    private class CloadImage extends AsyncTask<String, Integer, List<ImageAdapter.Post>> {
         @Override
-        protected List<Bitmap> doInBackground(String... urls) {
-            List<Bitmap> bitmapList = new ArrayList<>();
+        protected List<ImageAdapter.Post> doInBackground(String... urls) {
+            List<ImageAdapter.Post> postList = new ArrayList<>();
 
             try {
                 String apiUrl = urls[0];
@@ -117,17 +117,19 @@ public class MainActivity extends AppCompatActivity {
                     String strJson = result.toString();
                     JSONArray aryJson = new JSONArray(strJson);
 
-                    // 배열내모든이미지다운로드
+                    // 배열내모든 게시글(제목, 내용, 이미지) 다운로드
                     for (int i = 0; i < aryJson.length(); i++) {
                         post_json = (JSONObject) aryJson.get(i);
-                        imageUrl = post_json.getString("image");
+                        String title = post_json.optString("title", "");
+                        String text = post_json.optString("text", "");
+                        imageUrl = post_json.optString("image", "");
 
                         if (!imageUrl.equals("")) {
                             URL myImageUrl = new URL(imageUrl);
                             conn = (HttpURLConnection) myImageUrl.openConnection();
                             InputStream imgStream = conn.getInputStream();
                             Bitmap imageBitmap = BitmapFactory.decodeStream(imgStream);
-                            bitmapList.add(imageBitmap); // 이미지리스트에추가
+                            postList.add(new ImageAdapter.Post(title, text, imageBitmap));
                             imgStream.close();
                         }
                     }
@@ -136,17 +138,17 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            return bitmapList;
+            return postList;
         }
 
         @Override
-        protected void onPostExecute(List<Bitmap> images) {
-            if (images.isEmpty()) {
+        protected void onPostExecute(List<ImageAdapter.Post> posts) {
+            if (posts.isEmpty()) {
                 textView.setText("불러올 이미지가없습니다.");
             } else {
                 textView.setText("이미지 로드성공!");
                 RecyclerView recyclerView = findViewById(R.id.recyclerView);
-                ImageAdapter adapter = new ImageAdapter(images);
+                ImageAdapter adapter = new ImageAdapter(posts);
                 recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 recyclerView.setAdapter(adapter);
             }

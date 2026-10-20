@@ -6,16 +6,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {
-    private List<Bitmap> imageList;
-    public ImageAdapter(List<Bitmap> imageList) {// 생성자에서이미지 목록입력
-        this.imageList = imageList;
+
+    public static class Post {
+        public String title, text;
+        public Bitmap bitmap;
+
+        public Post(String title, String text, Bitmap bitmap) {
+            this.title = title;
+            this.text = text;
+            this.bitmap = bitmap;
+        }
     }
+
+    private List<Post> postList;
+
+    public ImageAdapter(List<Post> postList) {
+        this.postList = postList;
+    }
+
     @Override
     public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 // 이미지항목을나타낼뷰생성
@@ -25,20 +40,26 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 
     @Override
     public void onBindViewHolder(ImageViewHolder holder, int position) {
-// 해당위치의이미지를뷰에설정
-        Bitmap bitmap = imageList.get(position);
-        holder.imageView.setImageBitmap(bitmap);
+        Post post = postList.get(position);
+        holder.textViewTitle.setText(post.title);
+        holder.textViewText.setText(post.text);
+        holder.imageView.setImageBitmap(post.bitmap);
     }
+
     @Override
     public int getItemCount() {
-        return imageList.size();
+        return postList.size();
     }
+
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        TextView textViewTitle, textViewText;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.imageViewItem);  // item_image.xml에 있는ImageView
+            imageView = itemView.findViewById(R.id.imageViewItem);
+            textViewTitle = itemView.findViewById(R.id.textViewTitle);
+            textViewText = itemView.findViewById(R.id.textViewText);
         }
     }
 }
