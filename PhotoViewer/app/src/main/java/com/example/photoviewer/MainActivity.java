@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     ImageView imgView;
     TextView textView;
-    String site_url = "http://10.0.2.2:8000";
+    String site_url = "https://amymoon07.pythonanywhere.com"; // "http://10.0.2.2:8000";
     JSONObject post_json;
     String imageUrl = null;
     Bitmap bmImg = null;
